@@ -13,9 +13,33 @@ class Channel:
         self.__channel_id = channel_id
         self.__title = title
         self.__description = description
-        self.__subscriber_count = subscriber_count
+        self.__subscriber_count = int(subscriber_count)
         self.__video_count = video_count
         self.__view_count = view_count
+
+    def __str__(self):
+        return f'{self.__title} ({self.url})'
+
+    def __add__(self, other):
+        return self.__subscriber_count + other.__subscriber_count
+
+    def __sub__(self, other):
+        return self.__subscriber_count - other.__subscriber_count
+
+    def __gt__(self, other):
+        return self.__subscriber_count > other.__subscriber_count
+
+    def __ge__(self, other):
+        return self.__subscriber_count >= other.__subscriber_count
+
+    def __lt__(self, other):
+        return self.__subscriber_count < other.__subscriber_count
+
+    def __le__(self, other):
+        return self.__subscriber_count <= other.__subscriber_count
+
+    def __eq__(self, other):
+        return self.__subscriber_count == other.__subscriber_count
 
     @property
     def channel_id(self):
@@ -74,7 +98,18 @@ class Channel:
 
 def main():
     vdud = Channel.get_service('UCMCgOm8GZkHp8zJ6l7_hIuA')
-    vdud.to_json('vdud_data')
+    # vdud.to_json('vdud_data')
+    redactsiya = Channel.get_service('UC1eFXmJNkjITxPFWTy6RsWg')
+
+    print(vdud)
+    print(vdud + redactsiya)
+    print(vdud - redactsiya)
+    print(redactsiya - vdud)
+    print(vdud > redactsiya)
+    print(vdud >= redactsiya)
+    print(vdud < redactsiya)
+    print(vdud <= redactsiya)
+    print(vdud == redactsiya)
 
 
 main()
