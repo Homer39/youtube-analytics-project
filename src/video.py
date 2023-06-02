@@ -2,17 +2,29 @@ from googleapiclient.discovery import build
 import os
 
 
+class IDException(Exception):
+    pass
+
+
 class Video:
     """Класс для ютуб-канала"""
     api_key = os.getenv('API_KEY_YOUTUBE')
 
     def __init__(self, video_id):
-        self.__video_id = video_id
-        response_video = Video.get_service().videos().list(part='snippet,statistics,contentDetails,topicDetails',
-                                                           id=self.__video_id).execute()
-        self.__video_title: str = response_video['items'][0]['snippet']['title']
-        self.__view_count: int = response_video['items'][0]['statistics']['viewCount']
-        self.__like_count: int = response_video['items'][0]['statistics']['likeCount']
+        try:
+            self.__video_id = video_id
+            response_video = Video.get_service().videos().list(part='snippet,statistics,contentDetails,topicDetails',
+                                                               id=self.__video_id).execute()
+            self.__video_title: str = response_video['items'][0]['snippet']['title']
+            self.__view_count: int = response_video['items'][0]['statistics']['viewCount']
+            self.__like_count: int = response_video['items'][0]['statistics']['likeCount']
+            self.__url = f'https://www.youtube.com/watch?v={self.__video_id}'
+        except Exception:
+            self.__video_title = None
+            self.__view_count = None
+            self.__like_count = None
+            self.__url = None
+
 
     def __str__(self):
         return self.__video_title
@@ -22,7 +34,7 @@ class Video:
         return self.__video_id
 
     @property
-    def video_title(self):
+    def title(self):
         return self.__video_title
 
     @property
@@ -35,7 +47,7 @@ class Video:
 
     @property
     def url(self):
-        return f'https://www.youtube.com/watch?v={self.__video_id}'
+        return self.__url
 
     @classmethod
     def get_service(cls):
@@ -59,10 +71,9 @@ class PLVideo(Video):
     def playlist_id(self):
         return self.__playlist_id
 
+    if __name__ == '__main__':
+        broken_video = Video('broken_video_id')
+        assert broken_video.title is None
+        assert broken_video.like_count is None
 
-if __name__ == '__main__':
-    # Создаем два экземпляра класса
-    video1 = Video('9lO06Zxhu88')
-    video2 = PLVideo('BBotskuyw_M', 'PL7Ntiz7eTKwrqmApjln9u4ItzhDLRtPuD')
-    assert str(video1) == 'Как устроена IT-столица мира / Russian Silicon Valley (English subs)'
-    assert str(video2) == 'Пушкин: наше все?'
+
